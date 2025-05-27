@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2'; // ✅ Import SweetAlert2
 import {
   School as SchoolIcon,
   Lock as LockIcon,
@@ -32,14 +33,34 @@ const Login: React.FC = () => {
 
       const data = await response.json();
       if (data.status === 'success') {
+        // ✅ SweetAlert for success
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successfully!',
+          text: `Welcome ${data.user.firstName} (${data.user.role})!`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+
         setMessage(`Welcome ${data.user.firstName} (${data.user.role})!`);
         localStorage.setItem('user', JSON.stringify(data.user));
         setCurrentUser(data.user);
-        navigate('/dashboard');
+        setTimeout(() => navigate('/dashboard'), 2000); // Delay navigation to show alert
       } else {
+        // ❌ SweetAlert for failure
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: 'Check your credentials!',
+        });
         setMessage(data.message);
       }
     } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'Server error. Please try again later.',
+      });
       setMessage('Login failed. Server error.');
     } finally {
       setLoading(false);

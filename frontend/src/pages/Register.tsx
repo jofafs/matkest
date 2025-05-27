@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -27,11 +28,27 @@ const Register: React.FC = () => {
 
       const data = await response.json();
       if (data.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Registered Successfully!',
+          showConfirmButton: false,
+          timer: 2000
+        });
         setMessage('Registration successful! You can now login.');
       } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed!',
+          text: data.message || 'Something went wrong.'
+        });
         setMessage(data.message);
       }
     } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed!',
+        text: 'Server error. Please try again later.'
+      });
       setMessage('Registration failed. Server error.');
     }
   };
